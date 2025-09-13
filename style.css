@@ -1,0 +1,40 @@
+/* static/style.css - minimalist dashboard base */
+:root{
+  --bg:#f6f8fb;
+  --card:#ffffff;
+  --muted:#6b7280;
+  --accent:#3b82f6; /* blue */
+  --shadow: 0 6px 18px rgba(15,23,42,0.06);
+  --radius:12px;
+}
+
+*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+
+body{
+  margin:0;background:var(--bg);color:#111827;
+}
+
+.container{
+  max-width:1200px;margin:32px auto;padding:0 20px;
+}
+
+.header{
+  display:flex;align-items:center;justify-content:space-between;padding:18px 0;
+}
+
+.kpi-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:18px 0;
+}
+.card{
+  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;
+}
+.card h3{margin:0;font-size:14px;color:var(--muted)}
+.card .value{font-size:20px;font-weight:700;margin-top:8px;color:#111827}
+
+/* responsive */
+@media (max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:480px){
+  .kpi-grid{grid-template-columns:1fr}
+}
