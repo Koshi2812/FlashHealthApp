@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Health Dashboard</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #06b6d4, #3b82f6, #6366f1);
+      color: #fff;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    header h1 { font-size: 36px; }
+    header p { opacity: 0.8; }
+
+    nav a {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      margin: 0 8px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    nav a:hover { background: rgba(255,255,255,0.3); }
+
+    .chart-container {
+      width: 90%;
+      max-width: 900px;
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 16px;
+      margin-top: 20px;
+      backdrop-filter: blur(6px);
+    }
+
+    canvas { width: 100% !important; height: 400px !important; }
+    h2 { text-align: center; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 Health Dashboard</h1>
+    <p>Interactive analytics of your health data</p>
+    <nav>
+      <a href="{{ url_for('index') }}">🏠 Home</a>
+      <a href="{{ url_for('add_data') }}">➕ Add Entry</a>
+    </nav>
+  </header>
+
+  <!-- Steps Chart -->
+  <div class="chart-container">
+    <h2>Steps Over Time</h2>
+    <canvas id="stepsChart"></canvas>
+  </div>
+
+  <!-- Calories Chart -->
+  <div class="chart-container">
+    <h2>Calories Burned</h2>
+    <canvas id="caloriesChart"></canvas>
+  </div>
+
+  <!-- Heart Rate Chart -->
+  <div class="chart-container">
+    <h2>Heart Rate</h2>
+    <canvas id="heartRateChart"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function createChart(canvasId, apiUrl, labelText, borderColor, bgColor) {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(json => {
+          const ctx = document.getElementById(canvasId).getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels: json.labels,
+              datasets: [{
+                label: labelText,
+                data: json.values,
+                fill: true,
+                backgroundColor: bgColor,
+                borderColor: borderColor,
+                tension: 0.4,
+                pointRadius: 6,
+                pointHoverRadius: 8
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { labels: { color: '#fff', font: { size: 14 } } } },
+              scales: {
+                x: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                y: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+              }
+            }
+          });
+        });
+    }
+
+    // Create all charts
+    createChart(
+      'stepsChart',
+      '/api/series/steps',
+      'Steps',
+      'rgba(59, 130, 246, 1)',
+      'rgba(59, 130, 246, 0.2)'
+    );
+
+    createChart(
+      'caloriesChart',
+      '/api/series/calories',
+      'Calories',
+      'rgba(234, 88, 12, 1)',
+      'rgba(234, 88, 12, 0.2)'
+    );
+
+    createChart(
+      'heartRateChart',
+      '/api/series/heart_rate',
+      'Heart Rate',
+      'rgba(220, 38, 38, 1)',
+      'rgba(220, 38, 38, 0.2)'
+    );
+  </script>
+</body>
+</html>
